@@ -228,7 +228,8 @@ export default function Home() {
                       user: "assistant", 
                       role: "assistant",
                       text: "", 
-                      ts: Date.now()
+                      ts: Date.now(),
+                      messageType: "stream" // Marcar como stream inicialmente
                     });
                   }
                   const aiEvt = evt as unknown as AIStreamEventExtended;
@@ -246,6 +247,26 @@ export default function Home() {
                 if (evt.type === "ai_done") {
                   setProcessing(false);
                   setTyping(false);
+                  
+                  // Finalizar a mensagem da IA se ela existir
+                  if (assistMsgIdRef.current && currentAssistantTextRef.current) {
+                    console.log('Finalizando mensagem da IA:', {
+                      id: assistMsgIdRef.current,
+                      text: currentAssistantTextRef.current,
+                      length: currentAssistantTextRef.current.length
+                    });
+                    
+                    updateMessage(assistMsgIdRef.current, { 
+                      text: currentAssistantTextRef.current,
+                      messageType: "message" // Garantir que seja uma mensagem final
+                    });
+                  } else {
+                    console.log('Nenhuma mensagem da IA para finalizar:', {
+                      hasId: !!assistMsgIdRef.current,
+                      hasText: !!currentAssistantTextRef.current
+                    });
+                  }
+                  
                   assistMsgIdRef.current = null;
                   currentAssistantTextRef.current = "";
                 }

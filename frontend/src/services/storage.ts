@@ -22,6 +22,10 @@ export function saveState(messages: ChatMessage[]): void {
   try {
     if (typeof window === 'undefined') return;
     
+    console.log('Salvando estado do chat:', {
+      totalMessages: messages.length,
+      messages: messages.map(m => ({ id: m.id, user: m.user, role: m.role, textLength: m.text?.length || 0 }))
+    });
 
     const validatedMessages = messages.map(message => {
 
