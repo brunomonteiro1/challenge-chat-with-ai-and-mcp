@@ -16,6 +16,27 @@ export function lastUserText(messages: { role: string; text: string }[]): string
   return ''
 }
 
+async function writeIncremental(
+  mcpClient: any,
+  path: string,
+  content: string,
+  buffer: string,
+  correlationId?: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await mcpClient.writeFile(path, content)
+    return { success: true }
+  } catch (error) {
+    logger.warn('mcp.ai.incremental.write.failed', {
+      error: String(error),
+      path,
+      bufferSize: buffer.length,
+      correlationId
+    })
+    return { success: false, error: String(error) }
+  }
+}
+
 export async function executeCreateFileViaAIStreamingMCP(
   ws: ClientSocket,
   requestId: string,
@@ -77,6 +98,13 @@ export async function executeCreateFileViaAIStreamingMCP(
 
     try {
       let eventCount = 0
+      let writeBuffer = ''
+      let lastWriteTime = Date.now()
+      const WRITE_INTERVAL = 50 // Escrever a cada 50ms para ser mais responsivo
+      const BUFFER_SIZE = 512 // Buffer menor para escrita mais frequente
+      let writeCount = 0
+      let isFirstWrite = true
+
       for await (const event of stream) {
         eventCount++
         const ev = event as StreamingEvent
@@ -93,7 +121,32 @@ export async function executeCreateFileViaAIStreamingMCP(
           const chunk = ev.delta.text
           if (chunk && chunk.length) {
             fullContent += chunk
+            writeBuffer += chunk
             bytes += Buffer.byteLength(chunk)
+
+            // Escrever incrementalmente se buffer atingir tamanho ou tempo limite
+            const now = Date.now()
+            const shouldWrite = writeBuffer.length >= BUFFER_SIZE ||
+                               (now - lastWriteTime) >= WRITE_INTERVAL ||
+                               (isFirstWrite && fullContent.length >= 100) // Primeira escrita mais cedo
+
+            if (shouldWrite) {
+              const result = await writeIncremental(mcpClient, relativeTarget, fullContent, writeBuffer, correlationId)
+              if (result.success) {
+                writeCount++
+                logger.debug('mcp.ai.incremental.write', {
+                  path: relativeTarget,
+                  contentLength: fullContent.length,
+                  bufferSize: writeBuffer.length,
+                  writeCount,
+                  isFirstWrite,
+                  correlationId
+                })
+                writeBuffer = ''
+                lastWriteTime = now
+                isFirstWrite = false
+              }
+            }
           }
           emit(ws, {
             type: 'tool_stream',
@@ -106,10 +159,24 @@ export async function executeCreateFileViaAIStreamingMCP(
         }
       }
 
+      // Escrever qualquer conteúdo restante no buffer
+      if (writeBuffer.length > 0) {
+        const result = await writeIncremental(mcpClient, relativeTarget, fullContent, writeBuffer, correlationId)
+        if (result.success) {
+          logger.debug('mcp.ai.final.buffer.write', {
+            path: relativeTarget,
+            contentLength: fullContent.length,
+            bufferSize: writeBuffer.length,
+            correlationId
+          })
+        }
+      }
+
       logger.info('mcp.ai.stream.completed', {
         eventCount,
         fullContentLength: fullContent.length,
         bytes,
+        writeCount,
         correlationId
       })
     } catch (e) {
@@ -117,39 +184,11 @@ export async function executeCreateFileViaAIStreamingMCP(
     }
 
     if (fullContent) {
-      logger.info('mcp.ai.writing.file', {
+      logger.info('mcp.ai.file.created', {
         path: relativeTarget,
-        contentLength: fullContent.length,
+        bytes,
         correlationId
       })
-
-      try {
-        logger.info('mcp.ai.calling.writeFile', {
-          path: relativeTarget,
-          contentLength: fullContent.length,
-          correlationId
-        })
-
-        const writeResult = await mcpClient.writeFile(relativeTarget, fullContent)
-
-        logger.info('mcp.ai.writeFile.result', {
-          path: relativeTarget,
-          result: writeResult,
-          correlationId
-        })
-
-        logger.info('mcp.ai.file.created', {
-          path: relativeTarget,
-          bytes,
-          correlationId
-        })
-      } catch (writeError) {
-        logger.error('mcp.ai.writeFile.failed', String(writeError), {
-          path: relativeTarget,
-          correlationId
-        })
-        throw writeError
-      }
     } else {
       logger.warn('mcp.ai.no.content', {
         path: relativeTarget,

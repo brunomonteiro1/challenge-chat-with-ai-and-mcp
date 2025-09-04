@@ -157,6 +157,20 @@ export class AIService {
           const rec = session.pending.get(pt.requestId)
           if (rec) rec.toolUseId = fin.id as string | undefined
         })
+
+        const textParts = blocks
+          .filter((b) => b.type === 'text')
+          .map((b) => String((b as any).text || ''))
+          .join('\n')
+          .trim()
+        const finalText = textParts || accText
+        if (finalText) {
+          messages.push({ id: rid(), text: finalText, ts: Date.now(), role: 'assistant' })
+          emit(ws, { type: 'ai_done', text: finalText, ...(correlationId ? { correlationId } : {}) })
+        } else {
+          emit(ws, { type: 'ai_done', ...(correlationId ? { correlationId } : {}) })
+        }
+
         session.streamingInFlight = false
         if (session.deferred && session.deferred.length) {
           const items = [...session.deferred]
