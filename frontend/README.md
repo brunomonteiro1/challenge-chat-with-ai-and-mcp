@@ -101,29 +101,6 @@ npm run build
 npm start
 ```
 
-### Build e Deploy
-
-```bash
-# Build para produção
-npm run build
-
-# Executar build
-npm start
-
-# Analisar bundle
-npm run analyze
-```
-
-### Docker
-
-```bash
-# Build da imagem
-docker build -t chat-frontend .
-
-# Executar container
-docker run -p 3000:3000 --env-file .env.local chat-frontend
-```
-
 ## 🎯 Funcionalidades Principais
 
 ### 1. Chat em Tempo Real
@@ -386,19 +363,6 @@ npm run start
 
 # Deploy para Vercel
 vercel --prod
-```
-
-### Docker
-
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "start"]
 ```
 
 ## 🔧 Troubleshooting
