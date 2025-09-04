@@ -28,7 +28,7 @@ export function defaultFilename() {
   return name
 }
 
-const STREAM_CHUNK_SIZE = 1024 // 1KB
+const STREAM_CHUNK_SIZE = 1024
 
 export async function executeCreateFileStreaming(
   ws: ClientSocket,

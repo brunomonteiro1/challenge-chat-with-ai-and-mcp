@@ -24,7 +24,7 @@ export interface DeferredDecision {
 
 export interface Session {
   id: number
-  aiMessages: any[] // SDK-shaped, keep flexible
+  aiMessages: any[]
   pending: Map<string, SessionPendingEntry>
   streamingInFlight: boolean
   deferred: DeferredDecision[]

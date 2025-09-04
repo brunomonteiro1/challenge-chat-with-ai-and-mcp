@@ -9,7 +9,7 @@ import { AIService } from '../application/aiService.js'
 import { config } from '../infrastructure/config.js'
 import { logger } from '../infrastructure/logger.js'
 import { getMetrics, getHealthCheck } from '../infrastructure/metrics.js'
-import { initializeTracing, shutdownTracing } from '../infrastructure/tracing.js'
+import { initializeTracing } from '../infrastructure/tracing.js'
 import { startWs } from '../transport/ws.js'
 
 const PORT: number | string = config.server.port
@@ -100,37 +100,4 @@ server.listen(PORT, () => {
     },
   })
 
-})
-
-
-process.on('SIGTERM', async () => {
-  logger.info('SIGTERM received, shutting down gracefully')
-
-  server.close(async () => {
-    logger.info('HTTP server closed')
-    await shutdownTracing()
-    process.exit(0)
-  })
-
-
-  setTimeout(() => {
-    logger.error('Could not close connections in time, forcefully shutting down')
-    process.exit(1)
-  }, 30000)
-})
-
-process.on('SIGINT', async () => {
-  logger.info('SIGINT received, shutting down gracefully')
-
-  server.close(async () => {
-    logger.info('HTTP server closed')
-    await shutdownTracing()
-    process.exit(0)
-  })
-
-
-  setTimeout(() => {
-    logger.error('Could not close connections in time, forcefully shutting down')
-    process.exit(1)
-  }, 30000)
 })

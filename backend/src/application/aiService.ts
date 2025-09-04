@@ -1,10 +1,6 @@
 
-import {
-
-  executeCreateFileViaAIStreaming,
-} from './tools.js'
 import { AI_MODEL, AI_PROVIDER } from '../adapters/anthropic/index.js'
-import { MCPFileWriter } from '../adapters/files/index.js'
+import { executeCreateFileViaAIStreamingMCP } from '../adapters/files/mcp-ai.js'
 import { logger, extractLogContext } from '../infrastructure/logger.js'
 import {  recordMCPTool, messageCounter } from '../infrastructure/metrics.js'
 import {  traceToolCall } from '../infrastructure/tracing.js'
@@ -47,7 +43,7 @@ type StreamingEvent = {
 export class AIService {
   constructor(
     private ai: IAIClient,
-    private files: IFileWriter = new MCPFileWriter(),
+    private files: IFileWriter,
   ) {}
   async handleAIFlow(
     ws: ClientSocket,
@@ -175,7 +171,7 @@ export class AIService {
               d.tool,
               messages,
               correlationId,
-              undefined, // broadcast não disponível neste contexto
+              undefined,
             )
           }
         }
@@ -275,7 +271,7 @@ export class AIService {
                 d.tool,
                 messages,
                 correlationId,
-                undefined, // broadcast não disponível neste contexto
+                undefined,
               )
             }
           }
@@ -529,7 +525,7 @@ export class AIService {
 
           result = await traceToolCall(
             'mcp_create_file_ai',
-            () => executeCreateFileViaAIStreaming(
+            () => executeCreateFileViaAIStreamingMCP(
               ws,
               requestId,
               params?.path,

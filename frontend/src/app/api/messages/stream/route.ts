@@ -1,6 +1,6 @@
 import { subscribe, type ChatMessage } from "@/lib/chat";
 
-export const dynamic = "force-dynamic"; // ensure no caching on route level
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   let unsubscribe: (() => void) | null = null;

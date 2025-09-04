@@ -30,7 +30,7 @@ export function useWebSocket({
     if (retries === 1) return 1000;
     if (retries === 2) return 2000;
     if (retries <= 4) return 5000;
-    return 10000; // cap at 10 seconds
+    return 10000;
   }, [retries]);
 
   const clearRetry = useCallback(() => {

@@ -7,6 +7,7 @@ import type { z } from 'zod'
 export type MessageEventOut = z.infer<typeof import('./schemas.js').messageEventOutSchema>
 export type ToolRequestEvent = z.infer<typeof import('./schemas.js').toolRequestSchema>
 export type ToolStreamEvent = z.infer<typeof import('./schemas.js').toolStreamSchema>
+export type FileCreatedEvent = z.infer<typeof import('./schemas.js').fileCreatedSchema>
 export type AiStreamEvent = z.infer<typeof import('./schemas.js').aiStreamSchema>
 export type AiDoneEvent = z.infer<typeof import('./schemas.js').aiDoneSchema>
 export type ErrorEventOut = z.infer<typeof import('./schemas.js').errorEventOutSchema>

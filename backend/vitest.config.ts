@@ -6,7 +6,7 @@ export default defineConfig({
     watch: false,
     environment: 'node',
     reporters: 'default',
-    threads: false,
+    pool: 'threads',
     isolate: false,
     testTimeout: 10000,
   },

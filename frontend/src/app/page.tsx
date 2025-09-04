@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import WsStatus from "@/components/WsStatus";
 import ToolApprovalModal from "@/components/ToolApprovalModal";
-import { ChatMessage } from "@/components/chat/ChatMessage";
-import { StreamingCard } from "@/components/chat/StreamingCard";
 import MessageList from "@/components/chat/MessageList";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -13,7 +11,7 @@ import { WebSocketErrorBoundary } from "@/components/WebSocketErrorBoundary";
 import { useChat } from "@/stores/chatContext";
 import { useToolApproval } from "@/stores/toolApprovalContext";
 import { useAutoScroll } from "@/hooks/useAutoScroll";
-import { ChatMessage as ChatMessageType, UserType, MessageSource, hasStreamId, hasTool, ToolRequestEventExtended, AIStreamEventExtended } from "@/types";
+import { MessageSource, hasStreamId, hasTool, ToolRequestEventExtended, AIStreamEventExtended } from "@/types";
 import { Button, Input } from "@/components/ui";
 
 export default function Home() {
@@ -45,7 +43,7 @@ export default function Home() {
     clearRequest
   } = useToolApproval();
   
-  const { listRef, scrollToBottom } = useAutoScroll({
+  const { listRef } = useAutoScroll({
     dependencies: [messages.length, streams],
     enabled: true
   });
@@ -117,7 +115,7 @@ export default function Home() {
             })
           );
 
-          clearRequest(); // Limpar o modal imediatamente
+          clearRequest();
         }}
         onDeny={() => {
           if (!toolReq || !wsRef.current) return;
@@ -131,8 +129,8 @@ export default function Home() {
 
 
           setProcessing(true);
-          setTyping(true); // Mostrar que a IA está processando a negativa
-          clearRequest(); // Limpar o modal imediatamente
+          setTyping(true); 
+          clearRequest();
         }}
       />
       <header className="flex items-center justify-between gap-3 mb-4">
@@ -172,7 +170,7 @@ export default function Home() {
                       tool: hasTool(m) ? m.tool : 'mcp_create_file',
                       startedAt: Date.now(),
                       expanded: true,
-                      anchorId: m.id, // Usar o ID da mensagem como âncora
+                      anchorId: m.id,
                       messageType: MessageSource.SERVER
                     });
                   }
@@ -224,7 +222,7 @@ export default function Home() {
                   if (!assistMsgIdRef.current) {
                     const id = `ai-${Date.now()}`;
                     assistMsgIdRef.current = id;
-                    currentAssistantTextRef.current = ""; // Limpar o texto acumulado para a nova mensagem
+                    currentAssistantTextRef.current = "";
                     addMessage({ 
                       id, 
                       user: "assistant", 
@@ -278,7 +276,7 @@ export default function Home() {
             isProcessing={isProcessing}
             assistantMsgId={assistMsgIdRef.current}
             onToggleStreamExpand={handleToggleStreamExpand}
-            height="100%" // Use full height of parent
+            height="100%"
           />
         )}
 

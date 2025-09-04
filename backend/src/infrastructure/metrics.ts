@@ -33,7 +33,7 @@ export const aiRequestDuration = new Histogram({
 export const aiTokensCounter = new Counter({
   name: 'ai_tokens_total',
   help: 'Total number of AI tokens consumed',
-  labelNames: ['provider', 'model', 'type'] as const, // type: input, output
+  labelNames: ['provider', 'model', 'type'] as const,
   registers: [register],
 })
 
@@ -63,7 +63,7 @@ export const wsConnectionsGauge = new Gauge({
 export const wsMessageCounter = new Counter({
   name: 'websocket_messages_total',
   help: 'Total number of WebSocket messages',
-  labelNames: ['direction', 'type', 'status'] as const, // direction: inbound, outbound
+  labelNames: ['direction', 'type', 'status'] as const,
   registers: [register],
 })
 
@@ -85,7 +85,7 @@ export const sessionGauge = new Gauge({
 export const sessionDuration = new Histogram({
   name: 'chat_session_duration_seconds',
   help: 'Duration of chat sessions in seconds',
-  buckets: [60, 300, 900, 1800, 3600, 7200, 14400], // 1min to 4h
+  buckets: [60, 300, 900, 1800, 3600, 7200, 14400],
   registers: [register],
 })
 
@@ -93,7 +93,7 @@ export const sessionDuration = new Histogram({
 export const fileOperationCounter = new Counter({
   name: 'file_operations_total',
   help: 'Total number of file operations',
-  labelNames: ['operation', 'status'] as const, // operation: read, write, delete
+  labelNames: ['operation', 'status'] as const,
   registers: [register],
 })
 
@@ -109,7 +109,7 @@ export const fileSizeHistogram = new Histogram({
   name: 'file_size_bytes',
   help: 'Size of files processed in bytes',
   labelNames: ['operation'] as const,
-  buckets: [1024, 10240, 102400, 1048576, 10485760], // 1KB to 10MB
+  buckets: [1024, 10240, 102400, 1048576, 10485760],
   registers: [register],
 })
 

@@ -22,12 +22,12 @@ export function Modal({
     
     if (open) {
       document.addEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "hidden"; // Prevent background scrolling
+      document.body.style.overflow = "hidden";
     }
     
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = ""; // Restore scrolling
+      document.body.style.overflow = "";
     };
   }, [open, onClose]);
   

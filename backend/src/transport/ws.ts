@@ -19,7 +19,7 @@ type ChatMessage = { id: string; text: string; ts: number; role: 'user' | 'assis
 
 export function startWs(server: http.Server, ai: AIService) {
   const messages: ChatMessage[] = []
-  const MAX_PAYLOAD_BYTES = config.ws.maxPayload // 256KB default or env override
+  const MAX_PAYLOAD_BYTES = config.ws.maxPayload
   const wss = new WebSocketServer({ server, maxPayload: MAX_PAYLOAD_BYTES })
 
   function broadcast(data: any, except?: ClientSocket) {

@@ -1,8 +1,10 @@
-import { executeCreateFileStreaming } from '../../application/tools.js'
+import { MCPFileWriter } from './mcp.js'
 
 import type { IFileWriter } from '../../ports/files.js'
 
 export class LocalFileWriter implements IFileWriter {
+  private mcpWriter = new MCPFileWriter()
+
   async write(args: {
     ws: any
     requestId: string
@@ -10,7 +12,6 @@ export class LocalFileWriter implements IFileWriter {
     content: string
     correlationId?: string
   }): Promise<{ path: string; bytes: number }> {
-    const { ws, requestId, userPath, content, correlationId } = args
-    return await executeCreateFileStreaming(ws, requestId, userPath, content, correlationId)
+    return await this.mcpWriter.write(args)
   }
 }

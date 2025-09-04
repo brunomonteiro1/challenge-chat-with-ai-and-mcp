@@ -104,8 +104,8 @@ const VirtualizedMessageList = ({
         height={height}
         width="100%"
         itemCount={items.length}
-        itemSize={70} // Average height of an item, will be adjusted by content
-        overscanCount={5} // Render extra items for smoother scrolling
+        itemSize={70}
+        overscanCount={5}
         className="rounded-lg border border-black/10 dark:border-white/10 bg-white/40 dark:bg-black/30 p-3"
       >
         {Row}

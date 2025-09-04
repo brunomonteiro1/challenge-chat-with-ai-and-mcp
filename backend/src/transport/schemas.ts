@@ -60,6 +60,19 @@ export const toolStreamSchema = z
     total: z.number().optional(),
     chunk: z.string().optional(),
     path: z.string().optional(),
+    content: z.string().optional(),
+    error: z.string().optional(),
+    correlationId: z.string().optional(),
+  })
+  .strict()
+
+export const fileCreatedSchema = z
+  .object({
+    type: z.literal('file_created'),
+    requestId: z.string(),
+    path: z.string(),
+    content: z.string(),
+    bytes: z.number(),
     correlationId: z.string().optional(),
   })
   .strict()
@@ -96,6 +109,7 @@ export const serverEventSchema = z.union([
   messageEventOutSchema,
   toolRequestSchema,
   toolStreamSchema,
+  fileCreatedSchema,
   aiStreamSchema,
   aiDoneSchema,
   errorEventOutSchema,

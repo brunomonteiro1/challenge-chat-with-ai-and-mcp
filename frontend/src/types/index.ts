@@ -6,18 +6,18 @@ export type RequestId = string & { readonly __brand: unique symbol };
 export interface ChatMessage {
   id: MessageId | string;
   user: UserType;
-  role?: "user" | "assistant" | "system"; // Novo campo para compatibilidade
+  role?: "user" | "assistant" | "system";
   text: string;
   ts: number;
   file?: {
     name: string;
     content: string;
   };
-  source?: MessageSource | undefined; // Identifica a origem da mensagem
-  messageType?: "message" | "stream"; // Tipo da mensagem
-  hasStream?: boolean; // Indica se a mensagem tem um stream associado
-  streamId?: string; // ID do stream associado à mensagem
-  _locallyCreated?: boolean; // Flag para identificar mensagens criadas localmente
+  source?: MessageSource | undefined; 
+  messageType?: "message" | "stream"; 
+  hasStream?: boolean; 
+  streamId?: string; 
+  _locallyCreated?: boolean;
 }
 
 
@@ -144,7 +144,7 @@ export interface StreamState {
   expanded?: boolean;
   anchorId?: MessageId | string;
   messageType?: MessageSource | undefined;
-  replaceContent?: boolean; // Flag para substituir o conteúdo em vez de concatenar
+  replaceContent?: boolean;
 }
 
 

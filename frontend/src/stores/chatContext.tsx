@@ -99,7 +99,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           [requestId]: {
             ...current,
             ...update,
-            content: current.content, // Preserva explicitamente o conteúdo acumulado
+            content: current.content,
           },
         };
       }
