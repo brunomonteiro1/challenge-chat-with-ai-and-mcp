@@ -108,7 +108,7 @@ npm run build
 npm start
 ```
 
-### Com Docker Compose (recomendado)
+### Docker compose para instalar os serviços necessários
 
 ```bash
 # Na raiz do projeto
